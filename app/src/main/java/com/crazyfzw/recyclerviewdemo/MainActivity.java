@@ -1,8 +1,10 @@
 package com.crazyfzw.recyclerviewdemo;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,9 +14,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
 
     private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private MyRecyclerViewAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,13 @@ public class MainActivity extends AppCompatActivity {
 
         //显示垂直的RecyclerView
         initVerticalRecyclerView();
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.id_swiperefreshlayout);
+        //设置进度条颜色，最多设置4种循环显示
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.white,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light, android.R.color.holo_red_light);
+        swipeRefreshLayout.setOnRefreshListener(this);
     }
 
     private void initVerticalRecyclerView() {
@@ -48,14 +59,14 @@ public class MainActivity extends AppCompatActivity {
         //如果确定每个item项的高度是固定的，设置这个选项可以提高性能
         mRecyclerView.setHasFixedSize(true);
 
-        //创建或取得数据集
-        String[] datas = new String[20];
+        //创建或取得数据集，数据推荐还是时有List集合
+        final String[] datas = new String[20];
         for(int i=0; i<datas.length; i++){
             datas[i]="item"+i;
         }
 
         //创建adapter并且制定数据集
-        MyRecyclerViewAdapter adapter = new MyRecyclerViewAdapter(datas);
+        adapter = new MyRecyclerViewAdapter(datas);
 
         //为RecyclerView绑定Adapter
         mRecyclerView.setAdapter(adapter);
@@ -72,24 +83,19 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+    public void onRefresh() {
+        // 刷新时模拟数据的变化
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(false);
+                for (int i=0; i<11; i++) {
+                    int temp = (int) (Math.random() * 10);
+                    adapter.datass[i] = "new" + temp;
+                }
+                adapter.notifyDataSetChanged();
+            }
+            }, 1000);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

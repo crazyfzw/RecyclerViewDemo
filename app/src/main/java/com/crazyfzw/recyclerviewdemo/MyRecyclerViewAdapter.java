@@ -13,12 +13,12 @@ import android.widget.TextView;
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder>{
 
     //数据集
-    private String[] datas;
+    public String[] datass;
 
     //1.在构造函数中取得数据集
     public MyRecyclerViewAdapter(String[] datas){
         super();
-        this.datas = datas;
+        this.datass = datas;
     }
 
    //定义一个接口
@@ -46,7 +46,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        holder.textView.setText(datas[position]);
+        holder.textView.setText(datass[position]);
         if (mOnItemClickListener!=null){
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -60,7 +60,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     //5.返回数据的长度
     @Override
     public int getItemCount() {
-        return datas.length;
+        return datass.length;
     }
 
     //2.自定义的ViewHolder，取得每个Item的的所有界面元素
